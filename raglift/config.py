@@ -49,14 +49,31 @@ def load_config(path: str | Path = "raglift.toml") -> RagLiftConfig:
     load_dotenv()
     config_path = Path(path)
     if not config_path.exists():
-        return RagLiftConfig()
+        raise FileNotFoundError(
+            f"RagLift config not found at {config_path}. Run `raglift init <name>` to create one "
+            "or pass `--config` to point at an existing raglift.toml."
+        )
     with config_path.open("rb") as handle:
         data = tomllib.load(handle)
     return RagLiftConfig.model_validate(data)
 
 
 def write_default_config(path: Path) -> None:
-    path.write_text(
-        """[embeddings]\nprovider = \"openai\"\nmodel = \"text-embedding-3-small\"\n\n[llm]\nprovider = \"openai\"\nmodel = \"gpt-4o-mini\"\n\n[vector_store]\nprovider = \"chroma\"\npersist_directory = \".raglift/chroma\"\ncollection_name = \"raglift\"\n\n[chunking]\nchunk_size = 1000\nchunk_overlap = 150\n""",
-        encoding="utf-8",
-    )
+    default_config = """[embeddings]
+provider = "openai"
+model = "text-embedding-3-small"
+
+[llm]
+provider = "openai"
+model = "gpt-4o-mini"
+
+[vector_store]
+provider = "chroma"
+persist_directory = ".raglift/chroma"
+collection_name = "raglift"
+
+[chunking]
+chunk_size = 1000
+chunk_overlap = 150
+"""
+    path.write_text(default_config, encoding="utf-8")

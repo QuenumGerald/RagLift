@@ -15,7 +15,12 @@ from raglift.state import RAGState
 class RAGGraph:
     """Small wrapper around an explicit LangGraph StateGraph for RAG."""
 
-    def __init__(self, config: RagLiftConfig, embeddings: Any | None = None, llm: Any | None = None) -> None:
+    def __init__(
+        self,
+        config: RagLiftConfig,
+        embeddings: Any | None = None,
+        llm: Any | None = None,
+    ) -> None:
         self.config = config
         self.embeddings = embeddings or build_embeddings(config)
         self.llm = llm or build_llm(config)
@@ -56,7 +61,8 @@ class RAGGraph:
     def _generate_answer(self, state: RAGState) -> RAGState:
         context = "\n\n".join(_format_doc(doc) for doc in state.get("documents", []))
         prompt = (
-            "Answer the question using only the context. If the context is insufficient, say so.\n\n"
+            "Answer the question using only the context. "
+            "If the context is insufficient, say so.\n\n"
             f"Context:\n{context}\n\nQuestion: {state['question']}"
         )
         result = self.llm.invoke(prompt)

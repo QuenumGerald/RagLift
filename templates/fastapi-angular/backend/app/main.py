@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
@@ -6,6 +7,7 @@ from pydantic import BaseModel
 from raglift import RAGGraph
 
 app = FastAPI(title="RagLift App")
+DOCS_DIR = Path("docs")
 
 
 class ChatRequest(BaseModel):
@@ -18,10 +20,9 @@ def health():
 
 
 @app.post("/api/documents/upload")
-async def upload(file: UploadFile = File(...)):
-    docs = Path("docs")
-    docs.mkdir(exist_ok=True)
-    target = docs / Path(file.filename or "upload.txt").name
+async def upload(file: Annotated[UploadFile, File(...)]):
+    DOCS_DIR.mkdir(exist_ok=True)
+    target = DOCS_DIR / Path(file.filename or "upload.txt").name
     target.write_bytes(await file.read())
     return {"path": str(target)}
 

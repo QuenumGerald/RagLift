@@ -1,3 +1,5 @@
+import os
+
 from langchain_chroma import Chroma
 from langchain_core.embeddings import Embeddings
 from langchain_core.language_models.fake_chat_models import FakeListChatModel
@@ -28,12 +30,22 @@ class FakeEmbeddings(Embeddings):
 def build_embeddings(config: RagLiftConfig) -> Embeddings:
     if config.embeddings.provider == "fake":
         return FakeEmbeddings()
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError(
+            "OPENAI_API_KEY is required for OpenAI embeddings. Set it in your environment or "
+            "switch `embeddings.provider` to `fake` for local development and tests."
+        )
     return OpenAIEmbeddings(model=config.embeddings.model)
 
 
 def build_llm(config: RagLiftConfig):
     if config.llm.provider == "fake":
         return FakeListChatModel(responses=["This is a fake RagLift answer."])
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError(
+            "OPENAI_API_KEY is required for the OpenAI chat model. Set it in your environment "
+            "or switch `llm.provider` to `fake` for local development and tests."
+        )
     return ChatOpenAI(model=config.llm.model, temperature=0)
 
 

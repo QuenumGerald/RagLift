@@ -12,7 +12,9 @@ from raglift.retriever import FakeEmbeddings
 
 def write_config(path: Path) -> None:
     path.write_text(
-        '''[embeddings]\nprovider="fake"\n[llm]\nprovider="fake"\n[vector_store]\npersist_directory="{store}"\ncollection_name="test"\n[chunking]\nchunk_size=40\nchunk_overlap=5\n'''.format(store=path.parent / "chroma"),
+        '''[embeddings]\nprovider="fake"\n[llm]\nprovider="fake"\n[vector_store]\npersist_directory="{store}"\ncollection_name="test"\n[chunking]\nchunk_size=40\nchunk_overlap=5\n'''.format(
+            store=path.parent / "chroma"
+        ),
         encoding="utf-8",
     )
 
@@ -62,3 +64,45 @@ def test_cli_init(tmp_path):
     result = CliRunner().invoke(app, ["init", str(tmp_path / "app")])
     assert result.exit_code == 0
     assert (tmp_path / "app" / "raglift.toml").exists()
+
+
+def test_cli_ingest_and_ask_with_fake_providers(tmp_path):
+    app_dir = tmp_path / "app"
+    app_dir.mkdir()
+    write_config(app_dir / "raglift.toml")
+    docs = app_dir / "docs"
+    docs.mkdir()
+    (docs / "guide.md").write_text("RagLift builds LangGraph RAG apps.", encoding="utf-8")
+
+    runner = CliRunner()
+    ingest_result = runner.invoke(
+        app,
+        ["ingest", str(docs), "--config", str(app_dir / "raglift.toml")],
+    )
+    ask_result = runner.invoke(
+        app,
+        ["ask", "What does RagLift build?", "--config", str(app_dir / "raglift.toml")],
+    )
+
+    assert ingest_result.exit_code == 0, ingest_result.output
+    assert "Ingested" in ingest_result.output
+    assert ask_result.exit_code == 0, ask_result.output
+    assert "This is a fake RagLift answer." in ask_result.output
+
+
+def test_missing_config_is_reported(tmp_path):
+    result = CliRunner().invoke(app, ["ask", "hello", "--config", str(tmp_path / "missing.toml")])
+    assert result.exit_code != 0
+    assert "RagLift config not found" in result.output
+
+
+def test_openai_provider_requires_key(tmp_path, monkeypatch):
+    config_file = tmp_path / "raglift.toml"
+    config_file.write_text(
+        """[embeddings]\nprovider = "openai"\n\n[llm]\nprovider = "openai"\n""",
+        encoding="utf-8",
+    )
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    result = CliRunner().invoke(app, ["ask", "hello", "--config", str(config_file)])
+    assert result.exit_code != 0
+    assert "OPENAI_API_KEY is required" in result.output

@@ -1,5 +1,5 @@
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import typer
 import uvicorn
@@ -7,7 +7,18 @@ import uvicorn
 from raglift.config import write_default_config
 from raglift.graph import RAGGraph
 
-app = typer.Typer(help="Build full-stack LangGraph RAG apps without rebuilding the plumbing.")
+app = typer.Typer(help="Use RagLift as a reusable RAG SDK and CLI.")
+
+
+def _graph_from_config(config: str) -> RAGGraph:
+    try:
+        return RAGGraph.from_config(config)
+    except FileNotFoundError as exc:
+        typer.secho(str(exc), err=True)
+        raise typer.Exit(code=1) from exc
+    except RuntimeError as exc:
+        typer.secho(str(exc), err=True)
+        raise typer.Exit(code=1) from exc
 
 
 @app.command()
@@ -23,13 +34,13 @@ def init(name: str) -> None:
 
 @app.command()
 def ingest(path: str, config: str = "raglift.toml") -> None:
-    ids = RAGGraph.from_config(config).ingest(path)
+    ids = _graph_from_config(config).ingest(path)
     typer.echo(f"Ingested {len(ids)} chunks")
 
 
 @app.command()
 def ask(question: str, config: str = "raglift.toml") -> None:
-    answer = RAGGraph.from_config(config).ask(question)
+    answer = _graph_from_config(config).ask(question)
     typer.echo(answer.text)
     for source in answer.sources:
         typer.echo(f"- {source.path}#{source.chunk_id}")
@@ -50,7 +61,7 @@ def create(
         raise typer.BadParameter("v0.1 only supports --frontend angular --backend fastapi")
     src = Path(__file__).resolve().parent.parent / "templates" / "fastapi-angular"
     shutil.copytree(src, Path(name), dirs_exist_ok=True)
-    typer.echo(f"Created full-stack app at {name}")
+    typer.echo(f"Created optional full-stack template at {name}")
 
 
 if __name__ == "__main__":

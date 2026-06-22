@@ -1,16 +1,16 @@
 # RagLift
 
-RagLift is a Python SDK, CLI, and full-stack app generator for building RAG applications on top of LangChain and LangGraph.
+RagLift is a reusable Python SDK and CLI for building small RAG systems on top of LangChain and LangGraph.
 
-**Positioning:** Build full-stack LangGraph RAG apps without rebuilding the plumbing.
+**Primary goal:** provide a simple, installable RAG core that can be reused across projects.
 
 ## What RagLift is
 
 - A small Python SDK that wires ingestion, chunking, embeddings, Chroma, LangGraph retrieval, answer generation, and citations.
-- A Typer CLI for initializing, ingesting, asking, serving, and generating apps.
-- A v0.1 FastAPI + Angular template for local RAG apps.
+- A Typer CLI for initializing a reusable RAG project, ingesting documents, and asking questions.
+- A minimal v0.1 template for teams that still want an optional full-stack starting point.
 
-## What RagLift is NOT
+## What RagLift is not
 
 RagLift v0.1 is not a hosted platform, agent framework, auth system, dashboard, reranker, multi-tenant service, MCP layer, streaming server, or advanced observability product.
 
@@ -23,10 +23,15 @@ pip install raglift
 For local development:
 
 ```bash
-pip install -e '.[dev]'
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -U pip
+python -m pip install -e '.[dev]'
 ```
 
-## SDK quickstart
+## Core SDK
+
+The main reusable surface is `RAGGraph` from `raglift.graph`.
 
 ```python
 from raglift import RAGGraph
@@ -38,26 +43,59 @@ print(answer.text)
 print(answer.sources)
 ```
 
-## CLI quickstart
+## Core CLI
 
 ```bash
 raglift init my-rag-app
 cd my-rag-app
 raglift ingest ./docs
 raglift ask "What is this documentation about?"
-raglift serve
 ```
 
-## Full-stack Angular/FastAPI generation
+`raglift init` creates a reusable local project with:
+
+- `raglift.toml`
+- `docs/`
+- `.env.example`
+
+## Fake providers
+
+Fake providers are the recommended local workflow for tests, demos, and CI. They do not require `OPENAI_API_KEY`.
+
+Use this config for local development and tests:
+
+```toml
+[embeddings]
+provider = "fake"
+
+[llm]
+provider = "fake"
+
+[vector_store]
+persist_directory = ".raglift/chroma"
+collection_name = "raglift"
+
+[chunking]
+chunk_size = 1000
+chunk_overlap = 150
+```
+
+Run the test suite locally with:
+
+```bash
+python -m pytest
+ruff check .
+```
+
+## Optional full-stack template
+
+If you want a starter app around the SDK, you can still generate the v0.1 template:
 
 ```bash
 raglift create my-fullstack-app --frontend angular --backend fastapi
-cd my-fullstack-app
-cp .env.example .env
-docker compose up --build
 ```
 
-The generated backend exposes `GET /health`, `POST /api/documents/upload`, `POST /api/documents/ingest`, and `POST /api/chat`. The Angular app includes a chat page, document upload area, sources display, and minimal settings section.
+That template is secondary to the reusable SDK. It exists as a convenience wrapper, not as the main product surface.
 
 ## OpenAI configuration
 
@@ -70,16 +108,6 @@ RAGLIFT_CONFIG=raglift.toml
 
 Default `raglift.toml` uses OpenAI embeddings (`text-embedding-3-small`), OpenAI chat (`gpt-4o-mini`), and Chroma persisted under `.raglift/chroma`.
 
-For tests and demos without a key, set providers to `fake`:
-
-```toml
-[embeddings]
-provider = "fake"
-
-[llm]
-provider = "fake"
-```
-
 ## v0.1 limitations
 
 - Ingests only `.txt`, `.md`, and `.pdf` files.
@@ -90,7 +118,7 @@ provider = "fake"
 
 ## v0.2 roadmap
 
-- More template options and better Angular styling.
+- Better SDK ergonomics and clearer configuration helpers.
 - Optional streaming responses.
 - Pluggable vector stores and model providers.
 - Evaluation helpers and lightweight tracing.

@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import Annotated
+
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 
@@ -6,6 +8,7 @@ from raglift.config import EnvSettings
 from raglift.graph import RAGGraph
 
 app = FastAPI(title="RagLift")
+DOCS_DIR = Path("docs")
 
 
 class ChatRequest(BaseModel):
@@ -18,10 +21,9 @@ def health() -> dict[str, str]:
 
 
 @app.post("/api/documents/upload")
-async def upload_document(file: UploadFile = File(...)) -> dict[str, str]:
-    docs = Path("docs")
-    docs.mkdir(exist_ok=True)
-    destination = docs / Path(file.filename or "upload.txt").name
+async def upload_document(file: Annotated[UploadFile, File(...)]) -> dict[str, str]:
+    DOCS_DIR.mkdir(exist_ok=True)
+    destination = DOCS_DIR / Path(file.filename or "upload.txt").name
     destination.write_bytes(await file.read())
     return {"path": str(destination)}
 
@@ -35,4 +37,7 @@ def ingest_documents(path: str = "docs") -> dict[str, int]:
 @app.post("/api/chat")
 def chat(request: ChatRequest) -> dict[str, object]:
     response = RAGGraph.from_config(EnvSettings().raglift_config).ask(request.question)
-    return {"answer": response.text, "sources": [source.model_dump() for source in response.sources]}
+    return {
+        "answer": response.text,
+        "sources": [source.model_dump() for source in response.sources],
+    }

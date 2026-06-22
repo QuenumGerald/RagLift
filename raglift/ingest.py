@@ -25,7 +25,9 @@ def iter_document_paths(path: str | Path) -> list[Path]:
     root = Path(path)
     if root.is_file():
         return [root] if root.suffix.lower() in SUPPORTED_EXTENSIONS else []
-    return sorted(p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in SUPPORTED_EXTENSIONS)
+    return sorted(
+        p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in SUPPORTED_EXTENSIONS
+    )
 
 
 def chunk_documents(path: str | Path, config: ChunkingConfig) -> list[IngestedChunk]:
