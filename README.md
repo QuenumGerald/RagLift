@@ -58,6 +58,8 @@ raglift ask "What is this documentation about?"
 - `docs/`
 - `.env.example`
 
+See the full usage guide in [docs/USAGE.md](/home/nova/Documents/projects/RagLift/docs/USAGE.md).
+
 ## Fake providers
 
 Fake providers are the recommended local workflow for tests, demos, and CI. They do not require `OPENAI_API_KEY`.
