@@ -1,0 +1,9 @@
+[embeddings]
+provider = "fake"
+
+[llm]
+provider = "fake"
+
+[vector_store]
+persist_directory = ".raglift/chroma"
+collection_name = "docs_assistant"

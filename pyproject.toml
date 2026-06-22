@@ -1,0 +1,46 @@
+[project]
+name = "raglift"
+version = "0.1.0"
+description = "Python SDK, CLI, and app generator for LangGraph RAG apps."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "RagLift Contributors"}]
+dependencies = [
+  "chromadb>=0.5",
+  "fastapi>=0.111",
+  "langchain>=0.2",
+  "langchain-chroma>=0.1",
+  "langchain-community>=0.2",
+  "langchain-core>=0.2",
+  "langchain-openai>=0.1",
+  "langgraph>=0.2",
+  "pydantic>=2",
+  "pydantic-settings>=2",
+  "pypdf>=4",
+  "python-dotenv>=1",
+  "python-multipart>=0.0.9",
+  "tomli>=2; python_version<'3.11'",
+  "typer>=0.12",
+  "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+raglift = "raglift.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
