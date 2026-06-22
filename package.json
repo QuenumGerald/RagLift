@@ -1,0 +1,24 @@
+{
+  "name": "raglift",
+  "version": "0.1.0",
+  "description": "Reusable RAG core and CLI.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "raglift": "./bin/raglift"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "check": "eslint ."
+  },
+  "dependencies": {
+    "tsx": "^4.20.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "eslint": "^9.30.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

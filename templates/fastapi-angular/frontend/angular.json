@@ -1,1 +1,0 @@
-{"projects":{"raglift-app":{"architect":{"serve":{"builder":"@angular-devkit/build-angular:dev-server","options":{"buildTarget":"raglift-app:build"}},"build":{"builder":"@angular-devkit/build-angular:browser","options":{"main":"src/main.ts","index":"src/index.html","outputPath":"dist","browser":"src/main.ts"}}}}},"defaultProject":"raglift-app"}
