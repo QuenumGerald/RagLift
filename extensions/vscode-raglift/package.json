@@ -1,0 +1,44 @@
+{
+  "name": "raglift-vscode",
+  "displayName": "RagLift",
+  "description": "VS Code extension scaffold for the RagLift RAG core.",
+  "version": "0.1.0",
+  "publisher": "raglift",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onCommand:raglift.open"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "raglift.open",
+        "title": "RagLift: Open"
+      },
+      {
+        "command": "raglift.ask",
+        "title": "RagLift: Ask"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json -w",
+    "prepack": "npm run build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "raglift": "file:../.."
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

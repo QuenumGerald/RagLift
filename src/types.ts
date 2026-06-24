@@ -1,8 +1,14 @@
-export type Provider = "fake" | "openai";
+export type Provider = "fake" | "openai" | "anthropic" | "gemini" | "openrouter";
 
 export interface RagLiftConfig {
-  embeddings: { provider: Provider };
-  llm: { provider: Provider };
+  docsDir: string;
+  storeDir: string;
+  chunkSize: number;
+  chunkOverlap: number;
+  topK: number;
+  systemPrompt: string;
+  embeddings: { provider: Provider; baseUrl?: string };
+  llm: { provider: Provider; model?: string; baseUrl?: string };
   vectorStore: { persistDirectory: string; collectionName: string };
 }
 
@@ -21,4 +27,5 @@ export interface IngestedChunk {
   id: string;
   path: string;
   content: string;
+  embedding?: number[];
 }

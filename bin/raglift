@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
 set -e
 DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+if [ -f "$DIR/dist/cli.js" ]; then
+  exec node "$DIR/dist/cli.js" "$@"
+fi
 exec node --import tsx "$DIR/src/cli.ts" "$@"

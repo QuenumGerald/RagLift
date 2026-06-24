@@ -1,3 +1,20 @@
 # Docs Assistant Example
 
-Run `raglift ingest docs` and `raglift ask "What is RagLift?"`.
+Minimal workspace layout:
+
+```txt
+docs-assistant/
+  docs/
+  raglift.toml
+  src/raglift/pipeline.ts
+```
+
+Run:
+
+```bash
+npm install
+raglift ingest docs
+raglift ask "What is RagLift?"
+```
+
+Edit `raglift.toml` for simple settings and `src/raglift/pipeline.ts` to customize the pipeline.

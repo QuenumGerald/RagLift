@@ -4,15 +4,48 @@
   "description": "Reusable RAG core and CLI.",
   "license": "MIT",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "rag",
+    "llm",
+    "cli",
+    "typescript",
+    "vscode"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "bin": {
     "raglift": "./bin/raglift"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./cli": "./dist/cli.js"
+  },
   "scripts": {
     "dev": "tsx src/cli.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
     "test": "vitest run",
     "check": "eslint ."
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.0",
+    "@google/genai": "^0.12.0",
+    "dotenv": "^17.0.1",
+    "openai": "^4.78.1",
+    "pdf-parse": "^1.1.1",
+    "toml": "^4.1.1",
     "tsx": "^4.20.3"
   },
   "devDependencies": {
