@@ -2,6 +2,7 @@
   "name": "raglift",
   "version": "0.1.0",
   "description": "Reusable RAG core and CLI.",
+  "author": "Gerald Quenum",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",

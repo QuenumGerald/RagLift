@@ -2,7 +2,7 @@
 
 ![RagLift Logo](./RagLift_Logo.png)
 
-RagLift is a small TypeScript CLI and reusable RAG core.
+RagLift is a small TypeScript CLI and reusable RAG core by Gerald Quenum.
 
 ## Install
 

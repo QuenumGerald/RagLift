@@ -2,6 +2,8 @@
 
 ![RagLift Logo](../RagLift_Logo.png)
 
+RagLift by Gerald Quenum.
+
 ## Install
 
 ```bash

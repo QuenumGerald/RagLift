@@ -3,7 +3,8 @@
   "displayName": "RagLift",
   "description": "VS Code extension scaffold for the RagLift RAG core.",
   "version": "0.1.0",
-  "publisher": "raglift",
+  "publisher": "geraldquenum",
+  "icon": "RagLift_Logo.png",
   "engines": {
     "vscode": "^1.85.0"
   },

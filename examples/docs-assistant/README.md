@@ -1,5 +1,7 @@
 # Docs Assistant Example
 
+![RagLift Logo](./RagLift_Logo.png)
+
 Minimal workspace layout:
 
 ```txt

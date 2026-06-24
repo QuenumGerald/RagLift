@@ -1,6 +1,6 @@
 # RagLift VS Code Extension Scaffold
 
-![RagLift Logo](../../RagLift_Logo.png)
+![RagLift Logo](./RagLift_Logo.png)
 
 This is a minimal VS Code extension scaffold that can consume the RagLift package.
 
