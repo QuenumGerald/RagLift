@@ -1,8 +1,8 @@
 # RagLift
 
-RagLift is a reusable Python SDK and CLI for building small RAG systems on top of LangChain and LangGraph.
+RagLift is a lightweight Python SDK and CLI for inspectable RAG pipelines built with LangChain, LangGraph, and Chroma.
 
-**Primary goal:** provide a simple, installable RAG core that can be reused across projects.
+**Primary goal:** make small RAG pipelines easy to create, inspect, test, and reuse from Python or the command line.
 
 ## What RagLift is
 
@@ -27,6 +27,16 @@ python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -U pip
 python -m pip install -e '.[dev]'
+```
+
+## Quickstart
+
+Run the included fake-provider demo without `OPENAI_API_KEY`:
+
+```bash
+cd examples/basic
+raglift ingest ./docs --config raglift.toml
+raglift ask "What is RagLift?" --config raglift.toml
 ```
 
 ## Core SDK
@@ -58,7 +68,7 @@ raglift ask "What is this documentation about?"
 - `docs/`
 - `.env.example`
 
-See the full usage guide in [docs/USAGE.md](/home/nova/Documents/projects/RagLift/docs/USAGE.md).
+See the full usage guide in [docs/USAGE.md](docs/USAGE.md).
 
 ## Fake providers
 
@@ -80,6 +90,19 @@ collection_name = "raglift"
 [chunking]
 chunk_size = 1000
 chunk_overlap = 150
+
+[retrieval]
+top_k = 4
+```
+
+Fake embeddings are deterministic local vectors. The fake LLM returns a deterministic placeholder answer, while sources/citations still come from the documents retrieved from Chroma. Switch both providers back to `openai` and set `OPENAI_API_KEY` when you want real model calls.
+
+Try the ready-made fake-provider example:
+
+```bash
+cd examples/basic
+raglift ingest ./docs --config raglift.toml
+raglift ask "What is RagLift?" --config raglift.toml
 ```
 
 Run the test suite locally with:
@@ -108,7 +131,7 @@ OPENAI_API_KEY=sk-your-key
 RAGLIFT_CONFIG=raglift.toml
 ```
 
-Default `raglift.toml` uses OpenAI embeddings (`text-embedding-3-small`), OpenAI chat (`gpt-4o-mini`), and Chroma persisted under `.raglift/chroma`.
+Default `raglift.toml` uses OpenAI embeddings (`text-embedding-3-small`), OpenAI chat (`gpt-4o-mini`), retrieves `retrieval.top_k = 4` documents, and persists Chroma under `.raglift/chroma`.
 
 ## v0.1 limitations
 

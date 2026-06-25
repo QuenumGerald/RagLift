@@ -6,6 +6,7 @@ import uvicorn
 
 from raglift.config import write_default_config
 from raglift.graph import RAGGraph
+from raglift.ingest import IngestError
 
 app = typer.Typer(help="Use RagLift as a reusable RAG SDK and CLI.")
 
@@ -34,7 +35,11 @@ def init(name: str) -> None:
 
 @app.command()
 def ingest(path: str, config: str = "raglift.toml") -> None:
-    ids = _graph_from_config(config).ingest(path)
+    try:
+        ids = _graph_from_config(config).ingest(path)
+    except IngestError as exc:
+        typer.secho(str(exc), err=True)
+        raise typer.Exit(code=1) from exc
     typer.echo(f"Ingested {len(ids)} chunks")
 
 

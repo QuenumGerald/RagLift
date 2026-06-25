@@ -5,8 +5,13 @@ provider = "fake"
 provider = "fake"
 
 [vector_store]
+provider = "chroma"
 persist_directory = ".raglift/chroma"
-collection_name = "docs_assistant"
+collection_name = "raglift_basic"
+
+[chunking]
+chunk_size = 500
+chunk_overlap = 50
 
 [retrieval]
 top_k = 4
