@@ -48,6 +48,9 @@ collection_name = "raglift"
 [chunking]
 chunk_size = 1000
 chunk_overlap = 150
+
+[retrieval]
+top_k = 4
 ```
 
 ### OpenAI providers for real data
@@ -59,7 +62,7 @@ OPENAI_API_KEY=sk-your-key
 RAGLIFT_CONFIG=raglift.toml
 ```
 
-Keep the default `provider = "openai"` values in `raglift.toml`.
+Keep the default `provider = "openai"` values in `raglift.toml`. Tune `retrieval.top_k` to control how many chunks are retrieved for each question.
 
 ## 4. Add documents
 
@@ -106,3 +109,5 @@ ruff check .
 - If `raglift ask` or `raglift ingest` says the config is missing, make sure `raglift.toml` exists or pass `--config`.
 - If you are using OpenAI providers and see a missing key error, set `OPENAI_API_KEY` in `.env` or switch both providers to `fake`.
 - If you want deterministic behavior in tests, keep both `embeddings.provider` and `llm.provider` set to `fake`.
+- If `raglift ingest` reports no supported documents, add at least one `.txt`, `.md`, or readable `.pdf` file.
+- If a PDF cannot be read or is empty, export it with selectable text or convert it to Markdown/text first.

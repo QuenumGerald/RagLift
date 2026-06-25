@@ -55,7 +55,9 @@ class RAGGraph:
         return workflow.compile()
 
     def _retrieve(self, state: RAGState) -> RAGState:
-        docs = self.vector_store.similarity_search(state["question"], k=4)
+        docs = self.vector_store.similarity_search(
+            state["question"], k=self.config.retrieval.top_k
+        )
         return {"documents": docs}
 
     def _generate_answer(self, state: RAGState) -> RAGState:

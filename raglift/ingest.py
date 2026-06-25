@@ -4,6 +4,7 @@ from pathlib import Path
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 
 from raglift.config import ChunkingConfig
 from raglift.schemas import IngestedChunk
@@ -11,23 +12,48 @@ from raglift.schemas import IngestedChunk
 SUPPORTED_EXTENSIONS = {".txt", ".md", ".pdf"}
 
 
+class IngestError(ValueError):
+    """User-facing ingestion error safe to print from the CLI."""
+
+
 def read_document(path: Path) -> str:
     suffix = path.suffix.lower()
     if suffix in {".txt", ".md"}:
         return path.read_text(encoding="utf-8")
     if suffix == ".pdf":
-        reader = PdfReader(str(path))
-        return "\n".join(page.extract_text() or "" for page in reader.pages)
-    raise ValueError(f"Unsupported document type: {path}")
+        try:
+            reader = PdfReader(str(path))
+            text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        except (PdfReadError, OSError) as exc:
+            raise IngestError(f"PDF could not be read or is empty: {path}") from exc
+        if not text.strip():
+            raise IngestError(f"PDF could not be read or is empty: {path}")
+        return text
+    raise IngestError(
+        f"Unsupported document type: {path}. Supported extensions are: "
+        f"{', '.join(sorted(SUPPORTED_EXTENSIONS))}."
+    )
 
 
 def iter_document_paths(path: str | Path) -> list[Path]:
     root = Path(path)
+    if not root.exists():
+        raise IngestError(f"Document path not found: {root}")
     if root.is_file():
-        return [root] if root.suffix.lower() in SUPPORTED_EXTENSIONS else []
-    return sorted(
+        if root.suffix.lower() not in SUPPORTED_EXTENSIONS:
+            raise IngestError(
+                f"No supported documents found at {root}. Supported extensions are: "
+                f"{', '.join(sorted(SUPPORTED_EXTENSIONS))}."
+            )
+        return [root]
+    documents = sorted(
         p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in SUPPORTED_EXTENSIONS
     )
+    if not documents:
+        raise IngestError(
+            f"No supported documents found in {root}. Add .txt, .md, or readable .pdf files."
+        )
+    return documents
 
 
 def chunk_documents(path: str | Path, config: ChunkingConfig) -> list[IngestedChunk]:

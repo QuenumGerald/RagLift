@@ -1,3 +1,6 @@
 [vector_store]
 persist_directory = ".raglift/chroma"
 collection_name = "raglift"
+
+[retrieval]
+top_k = 4

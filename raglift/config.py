@@ -32,11 +32,16 @@ class ChunkingConfig(BaseModel):
     chunk_overlap: int = 150
 
 
+class RetrievalConfig(BaseModel):
+    top_k: int = Field(default=4, ge=1)
+
+
 class RagLiftConfig(BaseModel):
     embeddings: EmbeddingsConfig = Field(default_factory=EmbeddingsConfig)
     llm: LLMConfig = Field(default_factory=LLMConfig)
     vector_store: VectorStoreConfig = Field(default_factory=VectorStoreConfig)
     chunking: ChunkingConfig = Field(default_factory=ChunkingConfig)
+    retrieval: RetrievalConfig = Field(default_factory=RetrievalConfig)
 
 
 class EnvSettings(BaseSettings):
@@ -75,5 +80,8 @@ collection_name = "raglift"
 [chunking]
 chunk_size = 1000
 chunk_overlap = 150
+
+[retrieval]
+top_k = 4
 """
     path.write_text(default_config, encoding="utf-8")

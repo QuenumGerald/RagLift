@@ -58,4 +58,6 @@ def build_vector_store(config: RagLiftConfig, embeddings: Embeddings) -> Chroma:
 
 
 def build_retriever(config: RagLiftConfig, embeddings: Embeddings) -> VectorStoreRetriever:
-    return build_vector_store(config, embeddings).as_retriever(search_kwargs={"k": 4})
+    return build_vector_store(config, embeddings).as_retriever(
+        search_kwargs={"k": config.retrieval.top_k}
+    )
